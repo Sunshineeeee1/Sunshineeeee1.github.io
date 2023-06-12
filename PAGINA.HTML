@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Página Educativa - Subir y Descargar Archivos</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    #container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .file-upload {
+      text-align: center;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .file-upload input[type="file"] {
+      display: none;
+    }
+
+    .file-upload label {
+      display: inline-block;
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .file-upload label:hover {
+      background-color: #45a049;
+    }
+
+    .file-upload span {
+      font-weight: bold;
+    }
+
+    .file-list {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .file-list li {
+      list-style-type: none;
+      margin-bottom: 10px;
+    }
+
+    .file-list li a {
+      color: #4CAF50;
+      text-decoration: none;
+    }
+
+    .file-list li a:hover {
+      text-decoration: underline;
+    }
+    
+    .image-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .image-container img {
+      width: 300px;
+      height: auto;
+    }
+    
+    .image-left {
+      margin-right: 20px;
+    }
+    
+    .image-right {
+      margin-left: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <h1>DESCARGAR SPIDERMAN LA NUEVA EN 4K REAL NO FEIK</h1>
+    <div class="image-container">
+      <img src="https://ih1.redbubble.net/image.525689517.5737/flat,750x1000,075,f.u2.jpg" alt="Imagen izquierda" class="image-left">
+      <div class="file-upload">
+        <input type="file" id="upload" multiple>
+        <label for="upload">Seleccionar archivos para subir</label>
+        <span id="file-count"></span>
+      </div>
+      <img src="https://i.pinimg.com/originals/aa/99/6e/aa996eed4a4f5c237f47ac3b9369fabd.png" alt="Imagen derecha" class="image-right">
+    </div>
+    <ul class="file-list" id="file-list"></ul>
+  </div>
+
+  <script>
+    // Cargar archivos al iniciar la página
+    window.addEventListener('load', loadFilesFromLocalStorage);
+
+    // Subir archivos
+    document.getElementById('upload').addEventListener('change', handleFileSelect, false);
+
+    function handleFileSelect(event) {
+      var files = event.target.files;
+      var output = document.getElementById('file-list');
+      output.innerHTML = '';
+
+      // Guardar archivos en el almacenamiento local
+      saveFilesToLocalStorage(files);
+
+      for (var i = 0; i < files.length; i++) {
+        var file = files[i];
+        var li = document.createElement('li');
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(file);
+        a.target = '_blank';
+        a.textContent = file.name;
+        li.appendChild(a);
+        output.appendChild(li);
+      }
+
+      document.getElementById('file-count').textContent = files.length + ' archivo(s) seleccionado(s)';
+    }
+
+    // Guardar archivos en el almacenamiento local
+    function saveFilesToLocalStorage(files) {
+      var fileArray = Array.from(files);
+      var fileNames = fileArray.map(function(file) {
+        return file.name;
+      });
+      localStorage.setItem('uploadedFiles', JSON.stringify(fileNames));
+    }
+
+    // Cargar archivos desde el almacenamiento local
+    function loadFilesFromLocalStorage() {
+      var fileNames = JSON.parse(localStorage.getItem('uploadedFiles'));
+      var output = document.getElementById('file-list');
+      output.innerHTML = '';
+
+      if (fileNames && fileNames.length > 0) {
+        fileNames.forEach(function(fileName) {
+          var li = document.createElement('li');
+          var a = document.createElement('a');
+          a.href = 'javascript:void(0);';
+          a.textContent = fileName;
+          a.addEventListener('click', function() {
+            downloadFile(fileName);
+          });
+          li.appendChild(a);
+          output.appendChild(li);
+        });
+
+        document.getElementById('file-count').textContent = fileNames.length + ' archivo(s) seleccionado(s)';
+      }
+    }
+
+    // Descargar archivo
+    function downloadFile(fileName) {
+      var file = new Blob([fileName], { type: 'text/plain' });
+      var url = URL.createObjectURL(file);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      a.click();
+    }
+  </script>
+</body>
+</html>
